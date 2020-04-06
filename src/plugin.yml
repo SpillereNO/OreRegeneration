@@ -1,0 +1,5 @@
+name: OreRegeneration
+author: [HydroTekZ]
+main: no.spillere.oreregen.OreRegeneration
+version: 2.0
+api-version: 1.15
