@@ -141,14 +141,14 @@ public class OreRegenHandler {
 	private Block getRandomDir(Block b) {
 
 		Chunk c = b.getChunk();
-		int x = Math.floorMod(b.getX(), 15);
-		int z = Math.floorMod(b.getZ(), 15);
+		int x = Math.floorMod(b.getX(), 16);
 		int y = b.getY();
+		int z = Math.floorMod(b.getZ(), 16);
 
 		int[] mod = getRandomModifier();
 		x += mod[0];
-		z += mod[2];
 		y += mod[1];
+		z += mod[2];
 
 		if(x >= 0 && x < 16 && z >= 0 && z < 16)
 			return c.getBlock(x, y, z);
@@ -156,11 +156,9 @@ public class OreRegenHandler {
 	}
 
 	private int[] getRandomModifier() {
-		int x = plugin.getRandomNumber(-1, 1);
-		int y = plugin.getRandomNumber(-1, 1);
-		int z = plugin.getRandomNumber(-1, 1);
+		int[][] states = {{0,1,0}, {0,-1,0}, {1,0,0}, {-1,0,0}, {0,0,1}, {0,0,-1}};
 
-		int[] modifier = {x, y, z};
+		int[] modifier = states[plugin.getRandomNumber(0, states.length-1)];
 		return modifier;
 	}
 
