@@ -25,7 +25,7 @@ public class OreRegeneration extends JavaPlugin {
 
 	public int configVersion = 1;
 
-	public final OreRegenHandler OreRegenHandler = new OreRegenHandler(this);
+	public OreRegenHandler OreRegenHandler;
 	public final ConfigHandler ConfigHandler = new ConfigHandler(this);
 	public final StatsHandler StatsHandler = new StatsHandler(this);
 
@@ -36,6 +36,9 @@ public class OreRegeneration extends JavaPlugin {
 		getDataFolder().mkdir();
 		loadConfig();
 		registerCommands();
+
+		// Start ore re-generator task
+		OreRegenHandler = new OreRegenHandler(this, Bukkit.getWorlds().get(0));
 		OreRegenHandler.startOreRegenerator();
 	}
 

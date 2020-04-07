@@ -107,7 +107,7 @@ public class ConfigHandler {
 	}
 
 	public boolean checkBlockPlace() {
-		return !plugin.getConfig().getBoolean("Ignore.Placed blocks");
+		return plugin.getConfig().getBoolean("Ignore.Placed blocks");
 	}
 
 }
