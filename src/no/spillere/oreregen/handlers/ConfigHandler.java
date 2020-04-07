@@ -57,11 +57,11 @@ public class ConfigHandler {
 	public boolean recordStats() {
 		return plugin.getConfig().getBoolean("Record Stats");
 	}
-	
+
 	public int getAboveHeight() {
 		return plugin.getConfig().getInt("Ignore.Above Y level");
 	}
-	
+
 	public boolean isTypeActive(Material type) {
 		return getBlockList().contains(type);
 	}

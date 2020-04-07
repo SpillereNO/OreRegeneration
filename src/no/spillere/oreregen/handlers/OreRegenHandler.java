@@ -44,7 +44,8 @@ public class OreRegenHandler {
 
 				while (amount > 0) {
 					int veinSize = getVeinSize(material);
-					generateOreVein(material, veinSize);
+					int[] randomChunk = getRandomChunk();
+					plugin.ChunkHandler.generateOreVein(world, randomChunk[0], randomChunk[1], material, veinSize);
 					amount -= veinSize;
 				}
 
@@ -54,57 +55,53 @@ public class OreRegenHandler {
 		}, 200, 200);
 	}
 
-	public void generateOreVein(Material m, int veinSize) {
+	// Notice: Needs to be executed via ChunkHandler
+	public void generateOreVein(Chunk chunk, Material m, int veinSize) {
 
-		int[] randomChunk = getRandomChunk();
+		// Find core block of ore vein
+		Block block = null;
+		int tries = 3;
+		while (tries > 0) {
+			block = getRandomBlock(chunk, getRandomY(m));
+			if (isFillable(block.getType())) break;
+			else if (tries == 0) return;
+			tries--;
+		}
 
-		world.getChunkAtAsync(randomChunk[0], randomChunk[1], true, (chunk) -> {
+		// Create the actual ore vein
+		final Block core = block;
+		int i = 0;
+		tries = veinSize*3;
+		while (i < veinSize && tries > 0) {
+			tries--;
 
-			// Find core block of ore vein
-			Block block = null;
-			int tries = 3;
-			while (tries > 0) {
-				block = getRandomBlock(chunk, getRandomY(m));
-				if (isFillable(block.getType())) break;
-				else if (tries == 0) return;
-				tries--;
+			// Fill blocks
+			if (isFillable(block.getType())) {
+				block.setType(m);
+				i++;
 			}
 
-			// Create the actual ore vein
-			final Block core = block;
-			int i = 0;
-			tries = veinSize*3;
-			while (i < veinSize && tries > 0) {
-				tries--;
+			// Vein logic
+			Block randomBlock  = getRandomDir(block);
+			if (randomBlock == null)  block = core;
+			else block = randomBlock;
 
-				// Fill blocks
-				if (isFillable(block.getType())) {
-					block.setType(m);
-					i++;
-				}
+		}
 
-				// Vein logic
-				Block randomBlock  = getRandomDir(block);
-				if (randomBlock == null)  block = core;
-				else block = randomBlock;
-
+		// Finish
+		final int regen = i;
+		minedOres.forEach((k,v) -> {
+			if (k == m) {
+				minedOres.put(k, minedOres.get(k)-regen);
 			}
-
-			// Finish
-			final int regen = i;
-			minedOres.forEach((k,v) -> {
-				if (k == m) {
-					minedOres.put(k, minedOres.get(k)-regen);
-				}
-			});
-			plugin.StatsHandler.addRegenOre(m, regen);
-
-			// Debug
-			if (plugin.ConfigHandler.debug()) {
-				System.out.println("Generated " + regen + " " + m.toString() + " at " + core.getX() + " " + core.getY() + " " + core.getZ() + ".");
-			}
-
 		});
+		plugin.StatsHandler.addRegenOre(m, regen);
+
+		// Debug
+		if (plugin.ConfigHandler.debug()) {
+			System.out.println("Generated " + regen + " " + m.toString() + " at " + core.getX() + " " + core.getY() + " " + core.getZ() + ".");
+		}
+
 	}
 
 	private int getVeinSize(Material m) {
