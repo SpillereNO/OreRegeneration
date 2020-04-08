@@ -24,18 +24,34 @@ public class OreRegeneration extends JavaPlugin {
 	public FileConfiguration config;
 
 	public int configVersion = 1;
+	
+	public boolean isPaperMC = false;
+	public static OreRegeneration instance;
 
-	public final OreRegenHandler OreRegenHandler = new OreRegenHandler(this);
+	public OreRegenHandler OreRegenHandler;
 	public final ConfigHandler ConfigHandler = new ConfigHandler(this);
 	public final StatsHandler StatsHandler = new StatsHandler(this);
+	public final ChunkHandler ChunkHandler = new ChunkHandler(this);
 
 	public final OreListener OreListener = new OreListener(this);
 
 	public void onEnable() {
+		instance = this;
 		loadListeners();
 		getDataFolder().mkdir();
 		loadConfig();
 		registerCommands();
+		
+		// Check if Spigot or Paper
+		try {
+			isPaperMC = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
+		} catch (ClassNotFoundException e) {
+		    Bukkit.getLogger().info("OreRegeneration can utilize PaperMC's async chunk loading for better performance.");
+		    Bukkit.getLogger().info("PaperMC not detected, falling back to async combo with main thread ore regeneration.");
+		}
+		
+		// Start ore re-generator task
+		OreRegenHandler = new OreRegenHandler(this, Bukkit.getWorlds().get(0));
 		OreRegenHandler.startOreRegenerator();
 	}
 

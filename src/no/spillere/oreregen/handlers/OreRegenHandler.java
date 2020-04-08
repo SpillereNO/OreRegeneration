@@ -1,37 +1,28 @@
 package no.spillere.oreregen.handlers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-
 import com.google.common.collect.Maps;
-
 import no.spillere.oreregen.OreRegeneration;
-import no.spillere.oreregen.util.OreVein;
 
 public class OreRegenHandler {
-
-	public Map<UUID, OreVein> readyLocations = Maps.newConcurrentMap();
 
 	public Map<Material, Integer> minedOres = Maps.newConcurrentMap();
 
 	private OreRegeneration plugin;
 
-	public OreRegenHandler(OreRegeneration worldKeeperPlugin){
-		plugin = worldKeeperPlugin;
-	}
+	private World world;
 
+	public OreRegenHandler(OreRegeneration worldKeeperPlugin, World world){
+		plugin = worldKeeperPlugin;
+		this.world = world;
+	}
 
 	public void startOreRegenerator() {
 
@@ -43,36 +34,19 @@ public class OreRegenHandler {
 		// Start task
 		Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
 
-			// Count ready locations
-			HashMap<Material, Integer> countMap = new HashMap<Material, Integer>();
-			plugin.ConfigHandler.getBlockList().forEach((m) -> {
-				countMap.put(m, 0);
-			});
-			readyLocations.forEach((k,oreVein) -> {
-				Material m = oreVein.getType();
-				int value = countMap.get(m)+1;
-				countMap.put(m, value);
-			});
-
-			// Add ready locations
-			countMap.forEach((m,amount) -> {
-				while (amount < 20) {
-					OreVein oreVein = prepareOreVein(m);
-					readyLocations.put(UUID.randomUUID(), oreVein);
-					amount++;
-				}
-			});
-
 			// Generate ore veins
 			minedOres.forEach((material,amount) -> {
 
 				// Fill out ores
-				if (amount > 0 && plugin.ConfigHandler.debug()) System.out.println(material.toString() + ": " + amount + " ores in generating queue.");
-				OreVein oreVein = getReadyOreVein(material);
+				if (amount > 0 && plugin.ConfigHandler.debug()) {
+					System.out.println(material.toString() + ": " + amount + " ores in generating queue.");
+				}
+
 				while (amount > 0) {
-					fillOreVein(oreVein);
-					amount -= oreVein.getCoords().size();
-					oreVein = getReadyOreVein(material);
+					int veinSize = getVeinSize(material);
+					int[] randomChunk = getRandomChunk();
+					plugin.ChunkHandler.generateOreVein(world, randomChunk[0], randomChunk[1], material, veinSize);
+					amount -= veinSize;
 				}
 
 			});
@@ -81,57 +55,60 @@ public class OreRegenHandler {
 		}, 200, 200);
 	}
 
-	private OreVein getReadyOreVein(Material m) {
-		Iterator<Map.Entry<UUID, OreVein>> it = readyLocations.entrySet().iterator();
-		while (it.hasNext()) {
-			OreVein oreVein = it.next().getValue();
-			if (oreVein.getType() != m) continue;
-			it.remove();
-			return oreVein;
+	// Notice: Needs to be executed via ChunkHandler
+	public void generateOreVein(Chunk chunk, Material m, int veinSize) {
+
+		// Find core block of ore vein
+		Block block = null;
+		int tries = 3;
+		while (tries > 0) {
+			block = getRandomBlock(chunk, getRandomY(m));
+			if (isFillable(block.getType())) break;
+			else if (tries == 0) return;
+			tries--;
 		}
-		return null;
-	}
 
-	private OreVein prepareOreVein(Material m) {
-
-		World world = Bukkit.getWorlds().get(0);
-		int coordY = getRandomY(m);
-		int veinSize = getVeinSize(m);
-
-		List<int[]> coords = new ArrayList<int[]>();
-
-		Block b = null;
-
+		// Create the actual ore vein
+		final Block core = block;
 		int i = 0;
-		while (i < veinSize) {
-			if (b == null || i == 0 || coords.size() == 0) {
-				b = getRandomBlock(world, coordY);
-			}
-			int[] coord = {b.getX(), b.getY(), b.getZ()};
-			if (coords.contains(coord)) continue;
+		tries = veinSize*3;
+		while (i < veinSize && tries > 0) {
+			tries--;
 
-			if (isFillable(b.getType())) {
-				coords.add(coord);
+			// Fill blocks
+			if (isFillable(block.getType())) {
+				block.setType(m);
 				i++;
 			}
-			BlockFace direction = getRandomDirection();
-			b = b.getRelative(direction);
+
+			// Vein logic
+			Block randomBlock  = getRandomDir(block);
+			if (randomBlock == null)  block = core;
+			else block = randomBlock;
+
 		}
 
-		OreVein oreVein = new OreVein(m, coords);
-		return oreVein;
-	}
+		// Finish
+		final int regen = i;
+		minedOres.forEach((k,v) -> {
+			if (k == m) {
+				minedOres.put(k, minedOres.get(k)-regen);
+			}
+		});
+		plugin.StatsHandler.addRegenOre(m, regen);
 
-	private BlockFace getRandomDirection() {
-		BlockFace[] faces = BlockFace.values();
-		return faces[plugin.getRandomNumber(0, faces.length-1)];
+		// Debug
+		if (plugin.ConfigHandler.debug()) {
+			System.out.println("Generated " + regen + " " + m.toString() + " at " + core.getX() + " " + core.getY() + " " + core.getZ() + ".");
+		}
+
 	}
 
 	private int getVeinSize(Material m) {
-		
+
 		int from = plugin.ConfigHandler.getVeinSizeFrom(m);
 		int to = plugin.ConfigHandler.getVeinSizeTo(m);
-		
+
 		return plugin.getRandomNumber(from, to);
 	}
 
@@ -139,31 +116,8 @@ public class OreRegenHandler {
 
 		int from = plugin.ConfigHandler.getFromY(m);
 		int to = plugin.ConfigHandler.getToY(m);
-		
+
 		return plugin.getRandomNumber(from, to);
-	}
-
-	private void fillOreVein(OreVein oreVein) {
-		if (plugin.ConfigHandler.debug()) {
-			int[] x = oreVein.getCoords().get(0);
-			System.out.println("Generating " + oreVein.getCoords().size() + " " + oreVein.getType().toString() + " at " + x[0] + " " + x[1] + " " + x[2] + " ...");
-		}
-
-		minedOres.forEach((k,v) -> {
-			if (k == oreVein.getType()) {
-				minedOres.put(k, minedOres.get(k)-oreVein.getCoords().size());
-			}
-		});
-		plugin.StatsHandler.addRegenOre(oreVein.getType(), oreVein.getCoords().size());
-		List<Block> blocks = oreVein.getBlocks();
-
-		Bukkit.getScheduler().runTask(plugin, () -> {
-
-			for (Block b : blocks) {
-				b.setType(oreVein.getType());
-			}
-
-		});
 	}
 
 	private boolean isFillable(Material m) {
@@ -181,17 +135,49 @@ public class OreRegenHandler {
 		}
 	}
 
-	private Block getRandomBlock(World w, int y){
-		WorldBorder border = w.getWorldBorder();
+	private Block getRandomDir(Block b) {
+
+		Chunk c = b.getChunk();
+		int x = Math.floorMod(b.getX(), 16);
+		int y = b.getY();
+		int z = Math.floorMod(b.getZ(), 16);
+
+		int[] mod = getRandomModifier();
+		x += mod[0];
+		y += mod[1];
+		z += mod[2];
+
+		if(x >= 0 && x < 16 && z >= 0 && z < 16)
+			return c.getBlock(x, y, z);
+		else return null;
+	}
+
+	private int[] getRandomModifier() {
+		int[][] states = {{0,1,0}, {0,-1,0}, {1,0,0}, {-1,0,0}, {0,0,1}, {0,0,-1}};
+
+		int[] modifier = states[plugin.getRandomNumber(0, states.length-1)];
+		return modifier;
+	}
+
+	private Block getRandomBlock(Chunk chunk, int y){
+		int x = plugin.getRandomNumber(0, 15);
+		int z = plugin.getRandomNumber(0, 15);
+		return chunk.getBlock(x, y, z);
+	}
+
+	private int[] getRandomChunk(){
+		WorldBorder border = world.getWorldBorder();
 		Location c = border.getCenter();
-		int minX = (int) (border.getSize() / 2 * - 1) + c.getBlockX();
-		int maxX = (int) (border.getSize() / 2) + c.getBlockX();
-		int minZ = (int) (border.getSize() / 2 * - 1) + c.getBlockZ();
-		int maxZ = (int) (border.getSize() / 2) + c.getBlockZ();
+		int minX = (int) (((border.getSize() / -2) + c.getBlockX())/16);
+		int maxX = (int) (((border.getSize() / 2) + c.getBlockX())/16);
+		int minZ = (int) (((border.getSize() / -2) + c.getBlockZ())/16);
+		int maxZ = (int) (((border.getSize() / 2) + c.getBlockZ())/16);
+
 		int x = plugin.getRandomNumber(minX, maxX);
 		int z = plugin.getRandomNumber(minZ, maxZ);
-		if (y > 50) y = plugin.getRandomNumber(6, 40);
-		Location loc = new Location(w, x, y, z);
-		return loc.getBlock();
+
+		int[] chunkCoords = {x, z};
+
+		return chunkCoords;
 	}
 }
