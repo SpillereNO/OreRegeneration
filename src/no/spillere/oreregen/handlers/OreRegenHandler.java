@@ -168,10 +168,10 @@ public class OreRegenHandler {
 	private int[] getRandomChunk(){
 		WorldBorder border = world.getWorldBorder();
 		Location c = border.getCenter();
-		int minX = (int) (border.getSize() / (16*2) * - 1) + c.getBlockX();
-		int maxX = (int) (border.getSize() / (16*2)) + c.getBlockX();
-		int minZ = (int) (border.getSize() / (16*2) * - 1) + c.getBlockZ();
-		int maxZ = (int) (border.getSize() / (16*2)) + c.getBlockZ();
+		int minX = (int) (((border.getSize() / -2) + c.getBlockX())/16);
+		int maxX = (int) (((border.getSize() / 2) + c.getBlockX())/16);
+		int minZ = (int) (((border.getSize() / -2) + c.getBlockZ())/16);
+		int maxZ = (int) (((border.getSize() / 2) + c.getBlockZ())/16);
 
 		int x = plugin.getRandomNumber(minX, maxX);
 		int z = plugin.getRandomNumber(minZ, maxZ);
