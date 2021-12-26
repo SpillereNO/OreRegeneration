@@ -9,11 +9,11 @@ import no.spillere.oreregen.OreRegeneration;
 
 public class Spigot {
 
-	public static void generateOreVein(World world, int x, int z, Material type, int veinSize) {
-		Bukkit.getScheduler().runTask(OreRegeneration.instance, () -> {
-			Chunk chunk = world.getChunkAt(x, z);
-			OreRegeneration.instance.OreRegenHandler.generateOreVein(chunk, type, veinSize);
-		});
-	}
+    public static void generateOreVein(World world, int x, int z, Material type, int veinSize) {
+        Bukkit.getScheduler().runTask(OreRegeneration.instance, () -> {
+            Chunk chunk = world.getChunkAt(x, z);
+            OreRegeneration.instance.OreRegenHandler.generateOreVein(chunk, type, veinSize);
+        });
+    }
 
 }

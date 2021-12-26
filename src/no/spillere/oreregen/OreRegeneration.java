@@ -21,90 +21,90 @@ import no.spillere.oreregen.listeners.*;
 
 public class OreRegeneration extends JavaPlugin {
 
-	public FileConfiguration config;
+    public FileConfiguration config;
 
-	public int configVersion = 1;
-	
-	public boolean isPaperMC = false;
-	public static OreRegeneration instance;
+    public int configVersion = 1;
 
-	public OreRegenHandler OreRegenHandler;
-	public final ConfigHandler ConfigHandler = new ConfigHandler(this);
-	public final StatsHandler StatsHandler = new StatsHandler(this);
-	public final ChunkHandler ChunkHandler = new ChunkHandler(this);
+    public boolean isPaperMC = false;
+    public static OreRegeneration instance;
 
-	public final OreListener OreListener = new OreListener(this);
+    public OreRegenHandler OreRegenHandler;
+    public final ConfigHandler ConfigHandler = new ConfigHandler(this);
+    public final StatsHandler StatsHandler = new StatsHandler(this);
+    public final ChunkHandler ChunkHandler = new ChunkHandler(this);
 
-	public void onEnable() {
-		instance = this;
-		loadListeners();
-		getDataFolder().mkdir();
-		loadConfig();
-		registerCommands();
-		
-		// Check if Spigot or Paper
-		try {
-			isPaperMC = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
-		} catch (ClassNotFoundException e) {
-		    Bukkit.getLogger().info("OreRegeneration can utilize PaperMC's async chunk loading for better performance.");
-		    Bukkit.getLogger().info("PaperMC not detected, falling back to async combo with main thread ore regeneration.");
-		}
-		
-		// Start ore re-generator task
-		OreRegenHandler = new OreRegenHandler(this, Bukkit.getWorlds().get(0));
-		OreRegenHandler.startOreRegenerator();
-	}
+    public final OreListener OreListener = new OreListener(this);
 
-	public void loadListeners() {
-		getServer().getPluginManager().registerEvents(OreListener, this);
-	}
+    public void onEnable() {
+        instance = this;
+        loadListeners();
+        getDataFolder().mkdir();
+        loadConfig();
+        registerCommands();
 
-	public int getRandomNumber(int start, int stop){
-		Random r = new Random();
-		int Low = start;
-		int High = stop;
-		int R = r.nextInt(High-Low) + Low;
-		return R;
-	}
+        // Check if Spigot or Paper
+        try {
+            isPaperMC = Class.forName("com.destroystokyo.paper.VersionHistoryManager$VersionData") != null;
+        } catch (ClassNotFoundException e) {
+            Bukkit.getLogger().info("OreRegeneration can utilize PaperMC's async chunk loading for better performance.");
+            Bukkit.getLogger().info("PaperMC not detected, falling back to async combo with main thread ore regeneration.");
+        }
 
-	private void loadConfig() {
-		config = getConfig();
-		config.options().copyDefaults(true);
-		config.addDefault("Config Version", 0);
-		ConfigHandler.exportConfig();
-	}
+        // Start ore re-generator task
+        OreRegenHandler = new OreRegenHandler(this, Bukkit.getWorlds().get(0));
+        OreRegenHandler.startOreRegenerator();
+    }
 
-	private void registerCommands() {
-		registerCommand("oreregen", new OreRegenCommand(this), "oreregeneration", "oreregenerate");
-	}
+    public void loadListeners() {
+        getServer().getPluginManager().registerEvents(OreListener, this);
+    }
 
-	public void registerCommand(String name, CommandExecutor executor, String... aliases) {
-		try {
-			Constructor<PluginCommand> constructor = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
-			constructor.setAccessible(true);
+    public int getRandomNumber(int start, int stop) {
+        Random r = new Random();
+        int Low = start;
+        int High = stop;
+        int R = r.nextInt(High - Low) + Low;
+        return R;
+    }
 
-			PluginCommand command = constructor.newInstance(name, this);
+    private void loadConfig() {
+        config = getConfig();
+        config.options().copyDefaults(true);
+        config.addDefault("Config Version", 0);
+        ConfigHandler.exportConfig();
+    }
 
-			command.setExecutor(executor);
-			command.setAliases(Lists.newArrayList(aliases));
-			if (executor instanceof TabCompleter) {
-				command.setTabCompleter((TabCompleter) executor);
-			}
-			this.getCommandMap().register("blowableobsidians", command);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    private void registerCommands() {
+        registerCommand("oreregen", new OreRegenCommand(this), "oreregeneration", "oreregenerate");
+    }
 
-	private CommandMap getCommandMap() {
-		try {
-			org.bukkit.Server server = Bukkit.getServer();
-			Field commandMap = server.getClass().getDeclaredField("commandMap");
-			commandMap.setAccessible(true);
-			return (CommandMap) commandMap.get(server);
-		} catch (IllegalAccessException | NoSuchFieldException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
+    public void registerCommand(String name, CommandExecutor executor, String... aliases) {
+        try {
+            Constructor<PluginCommand> constructor = PluginCommand.class.getDeclaredConstructor(String.class, Plugin.class);
+            constructor.setAccessible(true);
+
+            PluginCommand command = constructor.newInstance(name, this);
+
+            command.setExecutor(executor);
+            command.setAliases(Lists.newArrayList(aliases));
+            if (executor instanceof TabCompleter) {
+                command.setTabCompleter((TabCompleter) executor);
+            }
+            this.getCommandMap().register("blowableobsidians", command);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private CommandMap getCommandMap() {
+        try {
+            org.bukkit.Server server = Bukkit.getServer();
+            Field commandMap = server.getClass().getDeclaredField("commandMap");
+            commandMap.setAccessible(true);
+            return (CommandMap) commandMap.get(server);
+        } catch (IllegalAccessException | NoSuchFieldException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

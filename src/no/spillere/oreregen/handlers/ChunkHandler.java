@@ -9,19 +9,19 @@ import no.spillere.oreregen.util.Spigot;
 
 public class ChunkHandler {
 
-	private OreRegeneration plugin;
+    private OreRegeneration plugin;
 
-	public ChunkHandler(OreRegeneration worldKeeperPlugin){
-		plugin = worldKeeperPlugin;
-	}
+    public ChunkHandler(OreRegeneration worldKeeperPlugin) {
+        plugin = worldKeeperPlugin;
+    }
 
-	public void generateOreVein(World world, int x, int z, Material type, int veinSize) {
+    public void generateOreVein(World world, int x, int z, Material type, int veinSize) {
 
-		if (plugin.isPaperMC) {
-			Paper.generateOreVein(world, x, z, type, veinSize);
+        if (plugin.isPaperMC) {
+            Paper.generateOreVein(world, x, z, type, veinSize);
 
-		} else {
-			Spigot.generateOreVein(world, x, z, type, veinSize);
-		}
-	}
+        } else {
+            Spigot.generateOreVein(world, x, z, type, veinSize);
+        }
+    }
 }

@@ -7,10 +7,11 @@ import no.spillere.oreregen.OreRegeneration;
 
 public class Paper {
 
-	public static void generateOreVein(World world, int x, int z, Material type, int veinSize) {
-		world.getChunkAtAsync(x, z, false, (chunk) -> {
-			OreRegeneration.instance.OreRegenHandler.generateOreVein(chunk, type, veinSize);
-		});
-	}
+    public static void generateOreVein(World world, int x, int z, Material type, int veinSize) {
+        world.getChunkAtAsync(x, z, false, (chunk) -> {
+            if (chunk == null) chunk = world.getChunkAt(x, z);
+            OreRegeneration.instance.OreRegenHandler.generateOreVein(chunk, type, veinSize);
+        });
+    }
 
 }

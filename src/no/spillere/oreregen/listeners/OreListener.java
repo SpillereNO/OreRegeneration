@@ -15,43 +15,43 @@ import no.spillere.oreregen.OreRegeneration;
 
 public class OreListener implements org.bukkit.event.Listener {
 
-	OreRegeneration plugin;
+    OreRegeneration plugin;
 
-	public OreListener(OreRegeneration worldKeeperPlugin){
-		plugin = worldKeeperPlugin;
-	}
+    public OreListener(OreRegeneration worldKeeperPlugin) {
+        plugin = worldKeeperPlugin;
+    }
 
-	private List<Block> placedBlocks = new ArrayList<Block>();
+    private List<Block> placedBlocks = new ArrayList<Block>();
 
-	@EventHandler (priority = EventPriority.MONITOR)
-	public void onBlockBreak(BlockBreakEvent e){
-		if (!e.isCancelled()){
-			Block b = e.getBlock();
-			Material m = b.getType();
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockBreak(BlockBreakEvent e) {
+        if (!e.isCancelled()) {
+            Block b = e.getBlock();
+            Material m = b.getType();
 
-			if (!b.getWorld().getName().equals(Bukkit.getWorlds().get(0).getName())) return;
-			if (placedBlocks.contains(b)) return;
-			if (plugin.ConfigHandler.getAboveHeight() <= b.getY()) return;
+            if (!b.getWorld().getName().equals(Bukkit.getWorlds().get(0).getName())) return;
+            if (placedBlocks.contains(b)) return;
+            if (plugin.ConfigHandler.getAboveHeight() <= b.getY()) return;
 
-			if (plugin.ConfigHandler.isTypeActive(m)){
-				// Add ore
-				plugin.OreRegenHandler.minedOres.put(m, plugin.OreRegenHandler.minedOres.get(m)+1);
-				plugin.StatsHandler.addMinedOre(m);
-			}
-		}
-	}
+            if (plugin.ConfigHandler.isTypeActive(m)) {
+                // Add ore
+                plugin.OreRegenHandler.minedOres.put(m, plugin.OreRegenHandler.minedOres.get(m) + 1);
+                plugin.StatsHandler.addMinedOre(m);
+            }
+        }
+    }
 
-	@EventHandler (priority = EventPriority.MONITOR)
-	public void onBlockPlace(BlockPlaceEvent e){
-		if (!e.isCancelled() && plugin.ConfigHandler.checkBlockPlace()){
-			Block b = e.getBlock();
-			Material m = b.getType();
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onBlockPlace(BlockPlaceEvent e) {
+        if (!e.isCancelled() && plugin.ConfigHandler.checkBlockPlace()) {
+            Block b = e.getBlock();
+            Material m = b.getType();
 
-			if (!b.getWorld().getName().equals(Bukkit.getWorlds().get(0).getName())) return;
+            if (!b.getWorld().getName().equals(Bukkit.getWorlds().get(0).getName())) return;
 
-			if (plugin.ConfigHandler.isTypeActive(m)){
-				placedBlocks.add(b);
-			}
-		}
-	}
+            if (plugin.ConfigHandler.isTypeActive(m)) {
+                placedBlocks.add(b);
+            }
+        }
+    }
 }

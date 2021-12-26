@@ -10,48 +10,44 @@ import no.spillere.oreregen.OreRegeneration;
 
 public class OreRegenCommand implements CommandExecutor {
 
-	private OreRegeneration plugin;
+    private OreRegeneration plugin;
 
-	public OreRegenCommand(OreRegeneration worldKeeperPlugin){
-		plugin = worldKeeperPlugin;
-	}
+    public OreRegenCommand(OreRegeneration worldKeeperPlugin) {
+        plugin = worldKeeperPlugin;
+    }
 
-	@Override
-	public boolean onCommand(CommandSender s, Command cmd,  String label, String[] args) {
+    @Override
+    public boolean onCommand(CommandSender s, Command cmd, String label, String[] args) {
 
-		if (!(s instanceof Player) || s.hasPermission("oreregen.cmd")) {
+        if (!(s instanceof Player) || s.hasPermission("oreregen.cmd")) {
 
-			if (args.length != 1) {
-				s.sendMessage(ChatColor.YELLOW + "Usage: " + ChatColor.GRAY + "/oreregen <stats/reload>");
+            if (args.length != 1) {
+                s.sendMessage(ChatColor.YELLOW + "Usage: " + ChatColor.GRAY + "/oreregen <stats/reload>");
 
-			}
-			else if (args[0].equalsIgnoreCase("stats")){
+            } else if (args[0].equalsIgnoreCase("stats")) {
 
-				s.sendMessage(ChatColor.DARK_GRAY + "-------------" + ChatColor.GOLD + "{ Statistics }" + ChatColor.DARK_GRAY + "--------------");
+                s.sendMessage(ChatColor.DARK_GRAY + "-------------" + ChatColor.GOLD + "{ Statistics }" + ChatColor.DARK_GRAY + "--------------");
 
-				plugin.ConfigHandler.getBlockList().forEach((m) -> {
-					s.sendMessage(ChatColor.YELLOW + m.toString() + ": " + ChatColor.GREEN + plugin.StatsHandler.getMinedOres(m)+ ChatColor.RESET + "/"
-							+ ChatColor.GREEN + plugin.StatsHandler.getRegenOres(m) + ChatColor.RESET + " (mined/regenerated)");
-				});
+                plugin.ConfigHandler.getBlockList().forEach((m) -> {
+                    s.sendMessage(ChatColor.YELLOW + m.toString() + ": " + ChatColor.GREEN + plugin.StatsHandler.getMinedOres(m) + ChatColor.RESET + "/"
+                            + ChatColor.GREEN + plugin.StatsHandler.getRegenOres(m) + ChatColor.RESET + " (mined/regenerated)");
+                });
 
-				s.sendMessage(ChatColor.DARK_GRAY + "--------------------------------------");
+                s.sendMessage(ChatColor.DARK_GRAY + "--------------------------------------");
 
-			}
-			else if (args[0].equalsIgnoreCase("reload")){
-				plugin.reloadConfig();
-				s.sendMessage(ChatColor.GREEN + "You successfully reloaded the configuration.");
+            } else if (args[0].equalsIgnoreCase("reload")) {
+                plugin.reloadConfig();
+                s.sendMessage(ChatColor.GREEN + "You successfully reloaded the configuration.");
 
-			}
-			else {
-				s.sendMessage(ChatColor.RED + "You entered a invalid argument!");
-			}
+            } else {
+                s.sendMessage(ChatColor.RED + "You entered a invalid argument!");
+            }
 
-		}
-		else {
-			s.sendMessage(ChatColor.RED + "You don't have permission to perform this command!");
-		}
+        } else {
+            s.sendMessage(ChatColor.RED + "You don't have permission to perform this command!");
+        }
 
-		return true;
-	}
+        return true;
+    }
 
 }

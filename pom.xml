@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>OreRegeneration</groupId>
 	<artifactId>OreRegeneration</artifactId>
-	<version>2.1</version>
+	<version>2.4</version>
 
 	<repositories>
 		<repository>
@@ -12,24 +12,25 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
-			<id>destroystokyo-repo</id>
-			<url>https://repo.destroystokyo.com/repository/maven-public//</url>
+			<id>papermc</id>
+			<url>https://papermc.io/repo/repository/maven-public/</url>
 		</repository>
 	</repositories>
 
 	<dependencies>
-		<!--Paperclip API -->
+		<!--Paper API -->
 		<dependency>
-			<groupId>com.destroystokyo.paper</groupId>
+			<groupId>io.papermc.paper</groupId>
 			<artifactId>paper-api</artifactId>
-			<version>1.16.2-R0.1-SNAPSHOT</version>
+			<version>1.18.1-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		<!--Bukkit API -->
+
+		<!--Spigot API -->
     	<dependency>
         	<groupId>org.spigotmc</groupId>
         	<artifactId>spigot-api</artifactId>
-      		<version>1.16.2-R0.1-SNAPSHOT</version>
+      		<version>1.17-R0.1-SNAPSHOT</version>
        		<scope>provided</scope>
     	</dependency>
 	</dependencies>
