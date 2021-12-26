@@ -23,7 +23,7 @@ public class OreRegeneration extends JavaPlugin {
 
     public FileConfiguration config;
 
-    public int configVersion = 1;
+    public int configVersion = 2;
 
     public boolean isPaperMC = false;
     public static OreRegeneration instance;

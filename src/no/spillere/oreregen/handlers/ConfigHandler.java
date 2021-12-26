@@ -71,21 +71,11 @@ public class ConfigHandler {
     }
 
     public int getFromY(Material m) {
-        String genY = plugin.getConfig().getString("Active Ore Types." + m.toString() + ".Height Y");
-        if (genY.contains("-")) genY.replace("-", "~");
-        if (genY.contains("~")) {
-            return Integer.parseInt(genY.split("~")[0]);
-        }
-        return Integer.parseInt(genY);
+        return plugin.getConfig().getInt("Active Ore Types." + m.toString() + ".From Y");
     }
 
     public int getToY(Material m) {
-        String genY = plugin.getConfig().getString("Active Ore Types." + m.toString() + ".Height Y");
-        if (genY.contains("-")) genY.replace("-", "~");
-        if (genY.contains("~")) {
-            return Integer.parseInt(genY.split("~")[1]);
-        }
-        return Integer.parseInt(genY);
+        return plugin.getConfig().getInt("Active Ore Types." + m.toString() + ".To Y");
     }
 
     public int getVeinSizeFrom(Material m) {
