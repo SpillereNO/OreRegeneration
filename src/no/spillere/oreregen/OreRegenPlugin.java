@@ -4,6 +4,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Random;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandMap;
@@ -19,14 +20,14 @@ import no.spillere.oreregen.commands.OreRegenCommand;
 import no.spillere.oreregen.handlers.*;
 import no.spillere.oreregen.listeners.*;
 
-public class OreRegeneration extends JavaPlugin {
+public class OreRegenPlugin extends JavaPlugin {
 
     public FileConfiguration config;
-
     public int configVersion = 2;
 
     public boolean isPaperMC = false;
-    public static OreRegeneration instance;
+    public static OreRegenPlugin instance;
+    public Metrics metrics;
 
     public OreRegenHandler OreRegenHandler;
     public final ConfigHandler ConfigHandler = new ConfigHandler(this);
@@ -49,6 +50,10 @@ public class OreRegeneration extends JavaPlugin {
             Bukkit.getLogger().info("OreRegeneration can utilize PaperMC's async chunk loading for better performance.");
             Bukkit.getLogger().info("PaperMC not detected, falling back to async combo with main thread ore regeneration.");
         }
+
+        // Enable bStats
+        int pluginId = 13882;
+        metrics = new Metrics(this, pluginId);
 
         // Start ore re-generator task
         OreRegenHandler = new OreRegenHandler(this, Bukkit.getWorlds().get(0));
@@ -107,4 +112,5 @@ public class OreRegeneration extends JavaPlugin {
             return null;
         }
     }
+
 }

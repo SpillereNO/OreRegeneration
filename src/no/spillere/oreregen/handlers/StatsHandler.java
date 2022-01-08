@@ -6,13 +6,13 @@ import org.bukkit.Material;
 
 import com.google.common.collect.Maps;
 
-import no.spillere.oreregen.OreRegeneration;
+import no.spillere.oreregen.OreRegenPlugin;
 
 public class StatsHandler {
 
-    private OreRegeneration plugin;
+    private OreRegenPlugin plugin;
 
-    public StatsHandler(OreRegeneration worldKeeperPlugin) {
+    public StatsHandler(OreRegenPlugin worldKeeperPlugin) {
         plugin = worldKeeperPlugin;
     }
 

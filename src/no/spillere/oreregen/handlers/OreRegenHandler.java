@@ -10,17 +10,17 @@ import org.bukkit.World;
 import org.bukkit.WorldBorder;
 import org.bukkit.block.Block;
 import com.google.common.collect.Maps;
-import no.spillere.oreregen.OreRegeneration;
+import no.spillere.oreregen.OreRegenPlugin;
 
 public class OreRegenHandler {
 
     public Map<Material, Integer> minedOres = Maps.newConcurrentMap();
 
-    private OreRegeneration plugin;
+    private OreRegenPlugin plugin;
 
     private World world;
 
-    public OreRegenHandler(OreRegeneration worldKeeperPlugin, World world) {
+    public OreRegenHandler(OreRegenPlugin worldKeeperPlugin, World world) {
         plugin = worldKeeperPlugin;
         this.world = world;
     }

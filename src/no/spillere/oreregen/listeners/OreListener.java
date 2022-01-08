@@ -11,13 +11,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import no.spillere.oreregen.OreRegeneration;
+import no.spillere.oreregen.OreRegenPlugin;
 
 public class OreListener implements org.bukkit.event.Listener {
 
-    OreRegeneration plugin;
+    OreRegenPlugin plugin;
 
-    public OreListener(OreRegeneration worldKeeperPlugin) {
+    public OreListener(OreRegenPlugin worldKeeperPlugin) {
         plugin = worldKeeperPlugin;
     }
 

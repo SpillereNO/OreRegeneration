@@ -8,14 +8,14 @@ import java.util.Set;
 
 import org.bukkit.Material;
 
-import no.spillere.oreregen.OreRegeneration;
+import no.spillere.oreregen.OreRegenPlugin;
 import no.spillere.oreregen.util.Util;
 
 public class ConfigHandler {
 
-    private OreRegeneration plugin;
+    private OreRegenPlugin plugin;
 
-    public ConfigHandler(OreRegeneration worldKeeperPlugin) {
+    public ConfigHandler(OreRegenPlugin worldKeeperPlugin) {
         plugin = worldKeeperPlugin;
     }
 

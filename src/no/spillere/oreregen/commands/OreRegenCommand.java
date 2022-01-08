@@ -6,13 +6,13 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import no.spillere.oreregen.OreRegeneration;
+import no.spillere.oreregen.OreRegenPlugin;
 
 public class OreRegenCommand implements CommandExecutor {
 
-    private OreRegeneration plugin;
+    private OreRegenPlugin plugin;
 
-    public OreRegenCommand(OreRegeneration worldKeeperPlugin) {
+    public OreRegenCommand(OreRegenPlugin worldKeeperPlugin) {
         plugin = worldKeeperPlugin;
     }
 

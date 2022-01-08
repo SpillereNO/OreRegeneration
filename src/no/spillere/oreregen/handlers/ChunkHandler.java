@@ -3,15 +3,15 @@ package no.spillere.oreregen.handlers;
 import org.bukkit.Material;
 import org.bukkit.World;
 
-import no.spillere.oreregen.OreRegeneration;
+import no.spillere.oreregen.OreRegenPlugin;
 import no.spillere.oreregen.util.Paper;
 import no.spillere.oreregen.util.Spigot;
 
 public class ChunkHandler {
 
-    private OreRegeneration plugin;
+    private OreRegenPlugin plugin;
 
-    public ChunkHandler(OreRegeneration worldKeeperPlugin) {
+    public ChunkHandler(OreRegenPlugin worldKeeperPlugin) {
         plugin = worldKeeperPlugin;
     }
 
